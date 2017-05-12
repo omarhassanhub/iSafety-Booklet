@@ -1,0 +1,89 @@
+<?php
+    if(isset($_POST['email_from'])) {
+
+
+        $email_to = "herman.larsson@live.se";
+        $email_subject = "bezod-design kontakta";
+
+         // } this could be used, didn't make much of a difference.
+         // closing brace for this is commented at the end of this code
+         // but you will need to delete the closing brace at the end if using the closing brace here
+        function died($error) {
+            // your error code can go here
+            echo "Erros uppstog";
+            echo "Dem/det är listade nedan.<br /><br />";
+                 echo $error."<br /><br />";
+            echo "Gå tillbaks och fix dem innan du skickar.<br /><br />";
+            die();
+        }
+
+        // validation expected data exists
+        if(!isset($_POST['first_name']) ||
+            !isset($_POST['last_name']) ||
+            !isset($_POST['foretag']) ||
+            !isset($_POST['email_from']) ||
+            !isset($_POST['telephone']) ||
+            !isset($_POST['text'])) {
+            died('Det värkar vara ett problem med formuläret du skrev');       
+        }
+
+        $first_name = $_POST['first_name'];
+        $last_name = $_POST['last_name'];
+        $foretag = $_POST['foretag'];
+        $email_from = $_POST['email_from'];
+        $telephone = $_POST['telephone'];
+        $text = $_POST['text'];
+
+        $error_message = "";
+        $email_exp = '/^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/';
+      if(!preg_match($email_exp,$email_from)) {
+        $error_message .= 'Email adressen du skrev värkar inte vara giltig.<br />';
+      }
+        $string_exp = "/^[A-Za-z .'-]+$/";
+      if(!preg_match($string_exp,$first_name)) {
+        $error_message .= 'Namnet adressen du skrev värkar inte vara giltig.<br />';
+      }
+      if(!preg_match($string_exp,$foretag)) {
+        $error_message .= 'Företaget du skrev värkar inte vara giltig..<br />';
+      }
+      if(strlen($text) < 2) {
+        $error_message .= 'Meddelandet du skrev värkar inte vara giltig..<br />';
+      }
+      if(strlen($error_message) > 0) {
+        died($error_message);
+      }
+        $email_message = "Form details below.\n\n";
+
+        function clean_string($string) {
+          $bad = array("content-type","bcc:","to:","cc:","href");
+          return str_replace($bad,"",$string);
+        }
+
+        $email_message .= "First Name: ".clean_string($first_name)."\n";
+        $email_message .= "Last Name: ".clean_string($last_name)."\n";
+        $email_message .= "Foretag: ".clean_string($foretag)."\n";
+        $email_message .= "Email: ".clean_string($email_from)."\n";
+        $email_message .= "Telephone: ".clean_string($telephone)."\n";
+        $email_message .= "Comments: ".clean_string($text)."\n";
+
+if (preg_match("/http/i", "$first_name")) {echo "$spamErrorMessage"; exit();}
+        if (preg_match("/http/i", "$email_from")) {echo "$spamErrorMessage"; exit();}
+        if (preg_match("/http/i", "$telephone")) {echo "$spamErrorMessage";exit();}
+        if (preg_match("/http/i", "$text")) {echo "$spamErrorMessage"; exit();}
+
+         $SpamErrorMessage = "Ingen URL tillåten";
+
+         $headers = 'From: '.$email_from."\r\n";
+         'Reply-To: '.$email_from."\r\n" .
+        'X-Mailer: PHP/' . phpversion();
+
+
+        if($robotest)
+            $error = "You are a gutless robot.";
+        else {
+    mail($email_to, $email_subject, $email_message, $headers); 
+    echo "Message sent.";
+        }
+    } // closing brace for if(isset at beginning of handler
+     // delete this brace if you are to use the closing one at the beginning
+?>
